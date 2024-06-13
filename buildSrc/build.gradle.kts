@@ -2,32 +2,34 @@ plugins {
     `kotlin-dsl`
 }
 
-tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
-}
-
 repositories {
     google()
     mavenCentral()
     maven(url = "https://jitpack.io")
-    gradlePluginPortal()
 }
 
 dependencies {
-    implementation(libs.android.gradle.plugin)
-    implementation(libs.kotlin.gradle.plugin)
-    implementation(libs.hilt.gradle.plugin)
-    implementation(libs.google.services.plugin)
-    implementation(libs.firebase.crashlytics.gradle.plugin)
-    implementation(libs.detekt.gradle.plugin)
-    implementation(libs.kotlinx.serialization.plugin)
-    implementation(libs.ksp.plugin)
-    implementation(libs.cashapp.molecule.plugin)
-    implementation(libs.room.plugin)
-    implementation(libs.paparazzi.plugin)
-    implementation(libs.module.graph.plugin)
+    //https://mvnrepository.com/artifact/com.android.tools.build/gradle?repo=google
+    implementation("com.android.tools.build:gradle:8.0.2")
 
-    // Make version catalog available in precompiled scripts
-    // https://github.com/gradle/gradle/issues/15383#issuecomment-1567461389
-    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
+    //https://kotlinlang.org/docs/releases.html#release-details
+    // Must match kotlinVersion from dependencies.kt
+    // Warning: KSP must match Kotlin's version
+    val kotlinVersion = "1.7.20"
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    implementation(kotlin("serialization", version = kotlinVersion))
+    implementation("com.google.devtools.ksp:symbol-processing-gradle-plugin:1.7.20-1.0.8")
+
+    //https://developer.android.com/training/dependency-injection/hilt-android
+    // Must match hiltVersion from dependencies.kt
+    implementation("com.google.dagger:hilt-android-gradle-plugin:2.44")
+
+    //URL: https://developers.google.com/android/guides/google-services-plugin
+    implementation("com.google.gms:google-services:4.3.13")
+
+    //https://www.mongodb.com/docs/realm/sdk/kotlin/install/android/
+    // Must match Versions.realm from dependencies.kt
+//    implementation("io.realm.kotlin:gradle-plugin:1.0.2")
+
+    implementation("com.google.firebase:firebase-crashlytics-gradle:2.9.1")
 }
