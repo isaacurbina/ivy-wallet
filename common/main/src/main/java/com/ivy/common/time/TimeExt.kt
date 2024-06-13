@@ -1,11 +1,14 @@
 package com.ivy.common.time
 
 import android.content.Context
-import com.ivy.common.R
 import com.ivy.common.time.provider.DeviceTimeProvider
-import java.time.*
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 // region Formatting
 fun LocalDateTime.format(pattern: String): String =
@@ -36,14 +39,20 @@ fun LocalDate.contextText(
         " (${this.format(pattern = "EEEE")})" else ""
     return when (this) {
         today -> {
-            getString(R.string.today) + alwaysWeekdayText
+            //getString(R.string.today) +
+            alwaysWeekdayText
         }
+
         today.minusDays(1) -> {
-            getString(R.string.yesterday) + alwaysWeekdayText
+            //getString(R.string.yesterday) +
+            alwaysWeekdayText
         }
+
         today.plusDays(1) -> {
-            getString(R.string.tomorrow) + alwaysWeekdayText
+            //getString(R.string.tomorrow) +
+            alwaysWeekdayText
         }
+
         else -> {
             this.format(pattern = "EEEE")
         }
