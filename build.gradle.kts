@@ -6,7 +6,7 @@ plugins {
     // Run with:
     // ./gradlew dependencyUpdates // Simple report in the console
     // ./gradlew dependencyUpdates -DoutputFormatter=html,json,xml // Report in console & generate files accordingly
-    id("com.github.ben-manes.versions") version "0.39.0"
+    id("com.github.ben-manes.versions") version "0.51.0"
 }
 
 tasks {

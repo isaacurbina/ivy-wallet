@@ -6,7 +6,7 @@ import com.ivy.buildsrc.Timber
 plugins {
     `android-library`
 
-    id("de.mannodermaus.android-junit5") version "1.9.3.0"
+    id("de.mannodermaus.android-junit5") version "1.10.0.0"
 }
 
 apply<com.ivy.buildsrc.IvyPlugin>()
@@ -17,14 +17,14 @@ dependencies {
 
     // region Google Drive deps
     // TODO: Extract to "dependencies.gradle.kts" in buildSrc
-    implementation("com.google.apis:google-api-services-drive:v3-rev136-1.25.0") {
+    implementation("com.google.apis:google-api-services-drive:v3-rev20240521-2.0.0") {
         exclude(group = "com.google.guava", module = "listenablefuture")
     }
-    implementation("com.google.http-client:google-http-client-gson:1.26.0")
-    implementation("com.google.api-client:google-api-client-android:1.26.0") {
+    implementation("com.google.http-client:google-http-client-gson:1.44.2")
+    implementation("com.google.api-client:google-api-client-android:2.6.0") {
         exclude(group = "com.google.guava", module = "listenablefuture")
     }
-    implementation("com.google.guava:guava:28.1-android")
+    implementation("com.google.guava:guava:33.2.1-android")
     // endregion
 
     Hilt()
