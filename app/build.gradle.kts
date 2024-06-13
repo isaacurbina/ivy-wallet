@@ -1,28 +1,35 @@
+import com.ivy.buildsrc.*
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("org.jetbrains.kotlin.android")
-    id("dagger.hilt.android.plugin")
-    id("org.jetbrains.kotlin.plugin.serialization")
-    id("com.google.devtools.ksp")
+    id("kotlin-kapt")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+    id("org.jetbrains.kotlin.android")
+    id("dagger.hilt.android.plugin")
+    id("de.mannodermaus.android-junit5") version "1.9.3.0"
 }
 
 android {
-    namespace = "com.ivy.wallet"
-    compileSdk = libs.versions.compile.sdk.get().toInt()
+    compileSdk = com.ivy.buildsrc.Project.compileSdkVersion
 
     defaultConfig {
-        applicationId = "com.ivy.wallet"
-        minSdk = libs.versions.min.sdk.get().toInt()
-        targetSdk = libs.versions.compile.sdk.get().toInt()
-        versionName = libs.versions.version.name.get()
-        versionCode = libs.versions.version.code.get().toInt()
-    }
+        applicationId = com.ivy.buildsrc.Project.applicationId
+        minSdk = com.ivy.buildsrc.Project.minSdk
+        targetSdk = com.ivy.buildsrc.Project.targetSdk
+        versionCode = com.ivy.buildsrc.Project.versionCode
+        versionName = com.ivy.buildsrc.Project.versionName
 
-    androidResources {
-        generateLocaleConfig = true
+        testInstrumentationRunner = "com.ivy.common.androidtest.HiltTestRunner"
+
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+
+            correctErrorTypes = true
+        }
     }
 
     signingConfigs {
@@ -45,24 +52,38 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            isDebuggable = false
+            isDefault = false
+
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
 
-            isDebuggable = false
-            isDefault = false
-
-            signingConfig = signingConfigs.getByName("release")
-
             resValue("string", "app_name", "Ivy Wallet")
         }
 
-        debug {
-            isMinifyEnabled = false
-            isShrinkResources = false
+        create("demo") {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            isDebuggable = false
+            isDefault = false
 
+            signingConfig = signingConfigs.getByName("debug")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+
+            applicationIdSuffix = ".debug"
+            matchingFallbacks.add("release")
+            resValue("string", "app_name", "Ivy Wallet Demo")
+        }
+
+        debug {
             isDebuggable = true
+            isMinifyEnabled = false
             isDefault = true
 
             signingConfig = signingConfigs.getByName("debug")
@@ -70,118 +91,98 @@ android {
             applicationIdSuffix = ".debug"
             resValue("string", "app_name", "Ivy Wallet Debug")
         }
-
-        create("demo") {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-
-            matchingFallbacks.add("release")
-
-            isDebuggable = false
-            isDefault = false
-
-            signingConfig = signingConfigs.getByName("debug")
-
-            applicationIdSuffix = ".debug"
-            resValue("string", "app_name", "Ivy Wallet Demo")
-        }
-    }
-
-    val javaVersion = libs.versions.jvm.target.get()
-    kotlinOptions {
-        jvmTarget = javaVersion
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.valueOf("VERSION_$javaVersion")
-        targetCompatibility = JavaVersion.valueOf("VERSION_$javaVersion")
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+        freeCompilerArgs = freeCompilerArgs + listOf("-Xskip-prerelease-check")
     }
 
     buildFeatures {
         compose = true
-        buildConfig = true
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+        kotlinCompilerExtensionVersion = com.ivy.buildsrc.Versions.composeCompilerVersion
     }
 
     lint {
-        disable += "ComposeViewModelInjection"
+//        isCheckReleaseBuilds = true
+//        isAbortOnError = false
         checkDependencies = true
-        abortOnError = false
-        checkReleaseBuilds = false
+        xmlReport = false
         htmlReport = true
-        htmlOutput = file("${project.rootDir}/build/reports/lint/lint.html")
-        xmlReport = true
-        xmlOutput = file("${project.rootDir}/build/reports/lint/lint.xml")
-        baseline = file("lint-baseline.xml")
+        htmlOutput = File(projectDir, "lint-merged-report.html")
     }
+
+    packagingOptions {
+        //Exclude this files so Jetpack Compose UI tests can build
+        resources.excludes.add("META-INF/AL2.0")
+        resources.excludes.add("META-INF/LGPL2.1")
+        resources.excludes.add("META-INF/DEPENDENCIES")
+        //-------------------------------------------------------
+    }
+
+    hilt {
+        enableExperimentalClasspathAggregation = true
+    }
+
+    testOptions {
+        unitTests.all {
+            //Required by Kotest
+            it.useJUnitPlatform()
+        }
+    }
+    namespace = "com.ivy.wallet"
 }
 
 dependencies {
+    implementation(project(":common:main"))
+    implementation(project(":design-system"))
+    implementation(project(":core:ui"))
+    implementation(project(":navigation"))
+    implementation(project(":categories"))
+    implementation(project(":settings"))
+    implementation(project(":transaction"))
+    implementation(project(":core:data-model"))
+    implementation(project(":widgets"))
+    implementation(project(":main:home"))
+    implementation(project(":main:accounts"))
+    implementation(project(":main:more-menu"))
+    implementation(project(":app-locked"))
+    implementation(project(":android:billing"))
+    implementation(project(":android:notifications"))
+    implementation(project(":core:exchange-provider"))
+    implementation(project(":core:domain"))
+    implementation(project(":core:persistence"))
+    implementation(project(":debug"))
+    implementation(project(":onboarding"))
+    implementation(project(":android:common"))
+    implementation(project(":android:file-system"))
+    implementation(project(":drive:google-drive"))
+    implementation(project(":photo-frame"))
+    implementation(project(":backup:api"))
+    implementation(project(":exchange-rates"))
 
-    implementation(projects.screen.attributions)
-    implementation(projects.screen.balance)
-    implementation(projects.screen.budgets)
-    implementation(projects.screen.categories)
-    implementation(projects.screen.contributors)
-    implementation(projects.screen.disclaimer)
-    implementation(projects.screen.editTransaction)
-    implementation(projects.screen.exchangeRates)
-    implementation(projects.screen.features)
-    implementation(projects.screen.home)
-    implementation(projects.screen.importData)
-    implementation(projects.screen.loans)
-    implementation(projects.screen.main)
-    implementation(projects.screen.onboarding)
-    implementation(projects.screen.piechart)
-    implementation(projects.screen.plannedPayments)
-    implementation(projects.screen.releases)
-    implementation(projects.screen.reports)
-    implementation(projects.screen.search)
-    implementation(projects.screen.settings)
-    implementation(projects.screen.transactions)
-    implementation(projects.shared.base)
-    implementation(projects.shared.data.core)
-    implementation(projects.shared.domain)
-    implementation(projects.shared.ui.navigation)
-    implementation(projects.temp.legacyCode)
-    implementation(projects.temp.oldDesign)
-    implementation(projects.widget.addTransaction)
-    implementation(projects.widget.balance)
+    Hilt()
 
-    implementation(libs.bundles.kotlin)
-    implementation(libs.bundles.kotlin.android)
-    implementation(libs.bundles.ktor)
-    implementation(libs.bundles.arrow)
-    implementation(libs.bundles.compose)
-    implementation(libs.bundles.activity)
-    implementation(libs.bundles.google)
-    implementation(libs.bundles.firebase)
-    implementation(libs.datastore)
-    implementation(libs.androidx.security)
-    implementation(libs.androidx.biometrics)
+    Google()
+    Firebase()
 
-    implementation(libs.bundles.hilt)
-    implementation(libs.material)
-    ksp(libs.hilt.compiler)
+    RoomDB(api = false)
 
-    implementation(libs.bundles.room)
-    ksp(libs.room.compiler)
+    Networking(api = false)
+    Testing()
+    AndroidXTest()
+    Coroutines(api = false)
+    AssertK()
 
-    implementation(libs.timber)
-    implementation(libs.keval)
-    implementation(libs.bundles.opencsv)
-    implementation(libs.androidx.work)
-    implementation(libs.androidx.recyclerview)
+    DataStore(api = false)
 
-    testImplementation(libs.bundles.testing)
-    testImplementation(libs.androidx.work.testing)
-
-    lintChecks(libs.slack.lint.compose)
+    ThirdParty()
 }
