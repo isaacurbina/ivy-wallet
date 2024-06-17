@@ -2,8 +2,8 @@ package com.ivy.core.domain.action.exchange
 
 import com.ivy.common.isNotBlank
 import com.ivy.core.domain.action.Action
-import com.ivy.core.persistence.dao.exchange.ExchangeRateDao
 import com.ivy.core.persistence.entity.exchange.ExchangeRateEntity
+import com.ivy.core.persistenceWriting.dao.exchange.ExchangeRateDao
 import com.ivy.data.CurrencyCode
 import com.ivy.exchange.RemoteExchangeProvider
 import javax.inject.Inject

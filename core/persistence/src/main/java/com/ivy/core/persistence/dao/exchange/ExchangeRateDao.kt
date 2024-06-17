@@ -1,4 +1,4 @@
-package com.ivy.core.persistence.dao.exchange
+package com.ivy.core.persistenceWriting.dao.exchange
 
 import androidx.room.Dao
 import androidx.room.Insert
