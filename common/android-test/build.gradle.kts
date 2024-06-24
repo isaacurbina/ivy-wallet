@@ -1,4 +1,12 @@
-import com.ivy.buildsrc.*
+import com.ivy.buildsrc.AndroidXTest
+import com.ivy.buildsrc.Coroutines
+import com.ivy.buildsrc.Hilt
+import com.ivy.buildsrc.HiltTesting
+import com.ivy.buildsrc.Kotlin
+import com.ivy.buildsrc.RoomDB
+import com.ivy.buildsrc.Testing
+import com.ivy.buildsrc.Versions
+import com.ivy.buildsrc.kapt
 
 plugins {
     `android-library`
@@ -16,6 +24,13 @@ dependencies {
         dependency = { api(it) },
         kaptProcessor = { kapt(it) }
     )
+
+    RoomDB(api = false)
+    implementation(project(":core:persistence"))
+    implementation(project(":core:domain"))
+    implementation(project(":common:main"))
+    implementation("app.cash.turbine:turbine:${Versions.turbine}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines}")
 
     Kotlin(api = false)
     Coroutines(api = false)
