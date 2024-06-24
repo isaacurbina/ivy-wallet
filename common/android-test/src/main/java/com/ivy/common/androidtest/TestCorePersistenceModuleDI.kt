@@ -1,6 +1,7 @@
-package com.ivy.core.persistence.di
+package com.ivy.common.androidtest
 
 import android.content.Context
+import androidx.room.Room
 import com.ivy.core.persistence.IvyWalletCoreDb
 import com.ivy.core.persistence.algorithm.accountcache.AccountCacheDao
 import com.ivy.core.persistence.algorithm.calc.RatesDao
@@ -14,21 +15,25 @@ import com.ivy.core.persistence.dao.trn.TransactionDao
 import com.ivy.core.persistence.dao.trn.TrnLinkRecordDao
 import com.ivy.core.persistence.dao.trn.TrnMetadataDao
 import com.ivy.core.persistence.dao.trn.TrnTagDao
+import com.ivy.core.persistence.di.CorePersistenceModuleDI
 import com.ivy.core.persistenceWriting.dao.exchange.ExchangeRateDao
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dagger.hilt.testing.TestInstallIn
 import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)
-object CorePersistenceModuleDI {
+@TestInstallIn(
+    components = [SingletonComponent::class],
+    replaces = [CorePersistenceModuleDI::class]
+)
+object TestCorePersistenceModuleDI {
     @Provides
     @Singleton
     fun provideIvyWalletDb(@ApplicationContext appContext: Context): IvyWalletCoreDb =
-        IvyWalletCoreDb.create(appContext)
+        Room.inMemoryDatabaseBuilder(appContext, IvyWalletCoreDb::class.java).build()
 
     @Provides
     @Singleton
