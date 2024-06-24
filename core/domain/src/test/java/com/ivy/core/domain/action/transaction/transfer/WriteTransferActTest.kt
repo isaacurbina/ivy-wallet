@@ -2,7 +2,7 @@ package com.ivy.core.domain.action.transaction.transfer
 
 import com.ivy.core.domain.action.transaction.WriteTrnsAct
 import com.ivy.core.domain.action.transaction.WriteTrnsBatchAct
-import com.ivy.core.domain.action.transaction.account
+import com.ivy.account
 import com.ivy.data.Sync
 import com.ivy.data.SyncState
 import com.ivy.data.Value

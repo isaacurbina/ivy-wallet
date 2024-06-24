@@ -3,8 +3,12 @@ package com.ivy.core.domain.action.transaction
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
+import com.ivy.account
+import com.ivy.attachment
 import com.ivy.core.domain.algorithm.accountcache.InvalidateAccCacheAct
 import com.ivy.data.transaction.TransactionType
+import com.ivy.tag
+import com.ivy.transaction
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
