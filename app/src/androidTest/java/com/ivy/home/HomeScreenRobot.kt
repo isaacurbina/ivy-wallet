@@ -1,9 +1,13 @@
 package com.ivy.home
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasAnySibling
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.ivy.common.time.provider.TimeProvider
+import com.ivy.data.CurrencyCode
 import com.ivy.navigation.DestinationRoute
 import com.ivy.navigation.Navigator
 import com.ivy.navigation.destinations.main.Home
@@ -70,6 +74,29 @@ class HomeScreenRobot(
     fun assertTransactionIsDisplayed(transactionTitle: String): HomeScreenRobot {
         composeRule
             .onNodeWithText(transactionTitle)
+            .assertIsDisplayed()
+        return this
+    }
+
+    fun openOverdue(): HomeScreenRobot {
+        return clickButton("Overdue")
+    }
+
+    fun clickGet(): HomeScreenRobot {
+        return clickButton("Get")
+    }
+
+    fun assertBalanceIsDisplayed(amount: Double, currency: CurrencyCode): HomeScreenRobot {
+        val formattedAmount = if (amount % 1.0 == 0.0) {
+            amount.toInt().toString()
+        } else amount.toString()
+
+        composeRule
+            .onAllNodes(
+                matcher = hasText(formattedAmount) and hasAnySibling(hasText(currency)),
+                useUnmergedTree = true
+            )
+            .onFirst()
             .assertIsDisplayed()
         return this
     }
