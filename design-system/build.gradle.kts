@@ -9,7 +9,7 @@ plugins {
     id("kotlin-android")
     id("kotlin-kapt")
 
-    id("de.mannodermaus.android-junit5") version "1.9.3.0"
+    id("de.mannodermaus.android-junit5") version "1.10.0.0"
 }
 
 apply<com.ivy.buildsrc.IvyComposePlugin>()

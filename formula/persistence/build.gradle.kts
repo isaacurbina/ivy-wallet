@@ -7,7 +7,7 @@ plugins {
     `kotlin-android`
     `kotlin-kapt` // for Room DB
 
-    id("de.mannodermaus.android-junit5") version "1.9.3.0"
+    id("de.mannodermaus.android-junit5") version "1.10.0.0"
 
 }
 
