@@ -1,9 +1,13 @@
 package com.ivy.home
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasAnySibling
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onFirst
+import androidx.compose.ui.test.onLast
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.ivy.common.time.provider.TimeProvider
@@ -16,6 +20,7 @@ import kotlinx.coroutines.runBlocking
 class HomeScreenRobot(
     private val composeRule: IvyComposeRule
 ) {
+    // region tests
     fun navigateTo(
         navigator: Navigator,
         route: DestinationRoute = Home.route
@@ -72,9 +77,18 @@ class HomeScreenRobot(
     }
 
     fun assertTransactionIsDisplayed(transactionTitle: String): HomeScreenRobot {
-        composeRule
-            .onNodeWithText(transactionTitle)
-            .assertIsDisplayed()
+        composeRule.onNodeWithText(transactionTitle).assertIsDisplayed()
+        return this
+    }
+
+    fun assertTransactionIsDisplayed(
+        transactionTitle: String,
+        accountName: String,
+        categoryName: String
+    ): HomeScreenRobot {
+        composeRule.onNodeWithText(transactionTitle).assertIsDisplayed()
+        composeRule.onNodeWithText(accountName).assertIsDisplayed()
+        composeRule.onNodeWithText(categoryName).assertIsDisplayed()
         return this
     }
 
@@ -101,10 +115,31 @@ class HomeScreenRobot(
         return this
     }
 
+    fun clickNewTransaction(): HomeScreenRobot {
+        composeRule.onNodeWithContentDescription("Add new transaction").performClick()
+        return this
+    }
+
+    fun clickExpense(): HomeScreenRobot {
+        composeRule.onNodeWithContentDescription("Create new expense").performClick()
+        return this
+    }
+
+    fun assertTotalExpensesIs(amount: Int): HomeScreenRobot {
+        composeRule
+            .onAllNodesWithTag("amount", useUnmergedTree = true)
+            .onLast()
+            .assertTextEquals(amount.toString())
+        return this
+    }
+    // endregion
+
+    // region private functions
     private fun clickButton(label: String): HomeScreenRobot {
         composeRule
             .onNodeWithText(label)
             .performClick()
         return this
     }
+    // endregion
 }
