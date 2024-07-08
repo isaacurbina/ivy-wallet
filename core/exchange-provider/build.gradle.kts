@@ -7,7 +7,7 @@ plugins {
     `android-library`
     id("dagger.hilt.android.plugin")
 
-    id("de.mannodermaus.android-junit5") version "1.9.3.0"
+    id("de.mannodermaus.android-junit5") version "1.10.0.0"
 }
 
 apply<com.ivy.buildsrc.IvyPlugin>()
